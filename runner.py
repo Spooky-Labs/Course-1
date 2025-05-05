@@ -19,7 +19,7 @@ OUTPUT_FILE = "results.json" # Path *inside* the container
 # OUTPUT_FILE = "./output.json"  # Output file path
 STARTING_CASH = 10000.0
 
-os.makedirs(CACHE_DIR, exist_ok=True)
+# os.makedirs(CACHE_DIR, exist_ok=True)
 
 
 def run_backtest(symbols, start_date, end_date, fast_period, slow_period, risk_free_rate=0.0):
