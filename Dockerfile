@@ -31,15 +31,10 @@ RUN useradd -m appuser && \
 # This runs at container startup BEFORE the main application
 # Required because: --read-only makes filesystem immutable, but HuggingFace needs
 # to write .lock files when loading models. tmpfs mount provides writable RAM-backed storage.
-COPY <<'EOF' /entrypoint.sh
-#!/bin/sh
-set -e
-# Copy models from /opt (baked into image, read-only) to /home/appuser/.cache (tmpfs, writable)
-mkdir -p /home/appuser/.cache
-cp -r /opt/models/.cache/huggingface /home/appuser/.cache/
-# Execute the CMD (runner.py)
-exec "$@"
-EOF
+RUN printf '#!/bin/sh\nset -e\n# Copy models from /opt (baked into image, read-only) to /home/appuser/.cache (tmpfs, 
+writable)\nmkdir -p /home/appuser/.cache\ncp -r /opt/models/.cache/huggingface /home/appuser/.cache/\n# Execute the CMD 
+(runner.py)\nexec "$@"\n' > /entrypoint.sh && \
+      chmod +x /entrypoint.sh
 
 # Make entrypoint executable
 RUN chmod +x /entrypoint.sh
