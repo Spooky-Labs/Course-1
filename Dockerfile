@@ -27,13 +27,13 @@ RUN useradd -m appuser && \
       cp -r /root/.cache/huggingface /opt/models/.cache/ && \
       chown -R appuser:appuser /opt/models/.cache/huggingface
 
-# Create entrypoint script to copy models from read-only location to writable tmpfs
-# This runs at container startup BEFORE the main application
-# Required because: --read-only makes filesystem immutable, but HuggingFace needs
-# to write .lock files when loading models. tmpfs mount provides writable RAM-backed storage.
-RUN printf '#!/bin/sh\nset -e\n# Copy models from /opt (baked into image, read-only) to /home/appuser/.cache (tmpfs, 
-writable)\nmkdir -p /home/appuser/.cache\ncp -r /opt/models/.cache/huggingface /home/appuser/.cache/\n# Execute the CMD 
-(runner.py)\nexec "$@"\n' > /entrypoint.sh && \
+RUN echo '#!/bin/sh' > /entrypoint.sh && \
+      echo 'set -e' >> /entrypoint.sh && \
+      echo '# Copy models from /opt (baked into image, read-only) to /home/appuser/.cache (tmpfs, writable)' >> /entrypoint.sh && \
+      echo 'mkdir -p /home/appuser/.cache' >> /entrypoint.sh && \
+      echo 'cp -r /opt/models/.cache/huggingface /home/appuser/.cache/' >> /entrypoint.sh && \
+      echo '# Execute the CMD (runner.py)' >> /entrypoint.sh && \
+      echo 'exec "$@"' >> /entrypoint.sh && \
       chmod +x /entrypoint.sh
 
 # Make entrypoint executable
