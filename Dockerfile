@@ -20,6 +20,7 @@ RUN useradd -m appuser && \
     chown -R appuser:appuser /home/appuser/.cache/huggingface
     
 USER appuser
+ENV HF_HOME=/home/appuser/.cache/huggingface
 
 # Default command (will be overridden at runtime)
 CMD ["python", "runner.py"]
