@@ -27,6 +27,10 @@ RUN useradd -m appuser && \
       cp -r /root/.cache/huggingface /opt/models/.cache/ && \
       chown -R appuser:appuser /opt/models/.cache/huggingface
 
+# Create entrypoint script to copy models from read-only location to writable tmpfs
+# This runs at container startup BEFORE the main application
+# Required because: --read-only makes filesystem immutable, but HuggingFace needs
+# to write .lock files when loading models. tmpfs mount provides writable RAM-backed storage.
 RUN echo '#!/bin/sh' > /entrypoint.sh && \
       echo 'set -e' >> /entrypoint.sh && \
       echo '# Copy models from /opt (baked into image, read-only) to /home/appuser/.cache (tmpfs, writable)' >> /entrypoint.sh && \
