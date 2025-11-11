@@ -13,7 +13,12 @@ COPY ./agent/agent.py /workspace/agent
 COPY ./data /workspace/data
 
 # Security: Run as non-root user
-RUN useradd -m appuser
+# REQUIRED: Copy cache to non-root user
+RUN useradd -m appuser && \
+    mkdir -p /home/appuser/.cache && \
+    cp -r /root/.cache/huggingface /home/appuser/.cache/ && \
+    chown -R appuser:appuser /home/appuser/.cache/huggingface
+    
 USER appuser
 
 # Default command (will be overridden at runtime)
