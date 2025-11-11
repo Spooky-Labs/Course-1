@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM gcr.io/YOUR_PROJECT/base-with-models:0.0.2
 
 WORKDIR /workspace
 
