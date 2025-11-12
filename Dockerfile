@@ -26,7 +26,7 @@ RUN useradd -m appuser && \
       mkdir -p /opt/models/.cache && \
       mkdir -p /home/appuser/.cache && \
       cp -r /root/.cache/huggingface /opt/models/.cache/ && \
-      chown -R appuser:appuser /opt/models/.cache/huggingface
+      chown -R appuser:appuser /opt/models/.cache/huggingface /home/appuser/.cache
 
 # Create entrypoint script to copy models from read-only location to writable tmpfs
 # This runs at container startup BEFORE the main application
