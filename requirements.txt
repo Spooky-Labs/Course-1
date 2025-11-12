@@ -2,6 +2,3 @@ backtrader
 pandas
 numpy
 matplotlib
-PyYAML
-torch
-chronos-forecasting
