@@ -3,6 +3,6 @@ pandas
 numpy
 matplotlib
 PyYAML
-transformers
+transformers==4.36.0
 torch
 chronos-forecasting
