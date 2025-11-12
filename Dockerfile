@@ -24,6 +24,7 @@ COPY ./data /workspace/data
 # This allows --read-only filesystem while HuggingFace can write lock files
 RUN useradd -m appuser && \
       mkdir -p /opt/models/.cache && \
+      mkdir -p /home/appuser/.cache && \
       cp -r /root/.cache/huggingface /opt/models/.cache/ && \
       chown -R appuser:appuser /opt/models/.cache/huggingface
 
