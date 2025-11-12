@@ -35,7 +35,6 @@ RUN useradd -m appuser && \
 RUN echo '#!/bin/sh' > /entrypoint.sh && \
       echo 'set -e' >> /entrypoint.sh && \
       echo '# Copy models from /opt (baked into image, read-only) to /home/appuser/.cache (tmpfs, writable)' >> /entrypoint.sh && \
-      echo 'mkdir -p /home/appuser/.cache' >> /entrypoint.sh && \
       echo 'cp -r /opt/models/.cache/huggingface /home/appuser/.cache/' >> /entrypoint.sh && \
       echo '# Execute the CMD (runner.py)' >> /entrypoint.sh && \
       echo 'exec "$@"' >> /entrypoint.sh && \
