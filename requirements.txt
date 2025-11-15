@@ -2,4 +2,4 @@ backtrader
 pandas
 numpy
 matplotlib
-chronos-forecasting
+chronos-forecasting==1.2.0
