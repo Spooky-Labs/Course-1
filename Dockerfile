@@ -1,6 +1,6 @@
 # Use the base image with pre-cached models
 # This image contains all HuggingFace models downloaded during build
-FROM gcr.io/the-farm-neutrino-315cd/base-with-models:0.1.4
+FROM gcr.io/the-farm-neutrino-315cd/base-with-models:0.1.5
 
 # Set working directory
 WORKDIR /workspace
