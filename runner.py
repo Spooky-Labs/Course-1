@@ -22,7 +22,7 @@ STARTING_CASH = 10000.0
 # os.makedirs(CACHE_DIR, exist_ok=True)
 
 
-def run_backtest(symbols, start_date, end_date, fast_period, slow_period, risk_free_rate=0.0):
+def run_backtest(symbols, start_date, end_date, risk_free_rate=0.0):
     """
     Runs the backtest and returns results as a dictionary.
     Expects data to be pre-cached in CACHE_DIR.
@@ -32,8 +32,6 @@ def run_backtest(symbols, start_date, end_date, fast_period, slow_period, risk_f
             "symbols": symbols,
             "start_date": start_date,
             "end_date": end_date,
-            "fast_period": fast_period,
-            "slow_period": slow_period,
         },
         "results": {},
         "error": None,
@@ -41,7 +39,7 @@ def run_backtest(symbols, start_date, end_date, fast_period, slow_period, risk_f
 
     try:
         cerebro = bt.Cerebro()
-        cerebro.addstrategy(Agent, fast_period=fast_period, slow_period=slow_period)
+        cerebro.addstrategy(Agent)
         cerebro.broker.setcash(STARTING_CASH)
 
         # --- Add Analyzers ---
@@ -205,8 +203,6 @@ if __name__ == "__main__":
     start_date = "1999-11-10"
     end_date = "2025-03-25"
     # end_date = datetime.datetime.now().strftime('%Y-%m-%d') # Use current date for end
-    fast_period = 10
-    slow_period = 30
     # Define risk-free rate for Sharpe Ratio (e.g., 0% or approximate T-bill rate)
     risk_free_rate = 0.01 # Example: 1% annual rate
 
@@ -217,7 +213,6 @@ if __name__ == "__main__":
         # Run the backtest
         final_results = run_backtest(
             symbols, start_date, end_date,
-            fast_period, slow_period,
             risk_free_rate=risk_free_rate
         )
         # Consolidate results (using overall portfolio return/pnl where appropriate)
