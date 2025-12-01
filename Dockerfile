@@ -2,6 +2,10 @@
 # This image contains all HuggingFace models downloaded during build
 FROM gcr.io/the-farm-neutrino-315cd/base-with-models:0.1.5
 
+# Accept models directory from build (populated by detect_models + GCS copy)
+# If provided, these models supplement/override base image models
+ARG MODELS_DIR=/workspace/hf_cache/hub
+
 # Set working directory
 WORKDIR /workspace
 
@@ -19,13 +23,25 @@ COPY ./agent /workspace/agent
 # Copy data files (mounted during build)
 COPY ./data /workspace/data
 
+# Copy detected models from build context (if any)
+# This directory is populated by the Cloud Build detect-models + copy-models-from-gcs steps
+COPY ${MODELS_DIR}* /tmp/detected_models/
+
 # Create non-root user and copy models to read-only location
 # Models will be copied to tmpfs-mounted /home/appuser/.cache at runtime
 # This allows --read-only filesystem while HuggingFace can write lock files
+# Priority: detected models (from GCS cache) > base image models
 RUN useradd -m appuser && \
-      mkdir -p /opt/models/.cache && \
+      mkdir -p /opt/models/.cache/huggingface/hub && \
       mkdir -p /home/appuser/.cache && \
-      cp -r /root/.cache/huggingface /opt/models/.cache/ && \
+      # First copy base image models (fallback)
+      cp -r /root/.cache/huggingface/* /opt/models/.cache/huggingface/ 2>/dev/null || true && \
+      # Then overlay detected models (if any) - these take priority
+      if [ -d /tmp/detected_models ] && [ "$(ls -A /tmp/detected_models 2>/dev/null)" ]; then \
+          echo "Copying detected models from build..."; \
+          cp -r /tmp/detected_models/* /opt/models/.cache/huggingface/hub/ 2>/dev/null || true; \
+      fi && \
+      rm -rf /tmp/detected_models && \
       chown -R appuser:appuser /opt/models/.cache/huggingface /home/appuser/.cache
 
 # Create entrypoint script to copy models from read-only location to writable tmpfs
