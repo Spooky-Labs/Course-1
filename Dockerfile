@@ -4,7 +4,8 @@ FROM gcr.io/the-farm-neutrino-315cd/base-with-models:0.1.5
 
 # Accept models directory from build (populated by detect_models + GCS copy)
 # If provided, these models supplement/override base image models
-ARG MODELS_DIR=/workspace/hf_cache/hub
+# NOTE: Must be a RELATIVE path (relative to build context) for Docker COPY
+ARG MODELS_DIR=hf_cache/hub
 
 # Set working directory
 WORKDIR /workspace
