@@ -1,6 +1,7 @@
-# Use the base image with pre-cached models
-# This image contains all HuggingFace models downloaded during build
-FROM gcr.io/the-farm-neutrino-315cd/base-with-models:0.1.5
+# Use the GPU-enabled base image with pre-cached models
+# This image contains PyTorch with CUDA 11.8 + HuggingFace models
+# Version 0.2.0: GPU support via pytorch/pytorch:2.4.0-cuda11.8-cudnn9-runtime
+FROM gcr.io/the-farm-neutrino-315cd/base-with-models:0.2.0
 
 # Accept models directory from build (populated by detect_models + GCS copy)
 # If provided, these models supplement/override base image models

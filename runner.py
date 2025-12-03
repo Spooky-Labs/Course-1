@@ -215,9 +215,21 @@ if __name__ == "__main__":
             symbols, start_date, end_date,
             risk_free_rate=risk_free_rate
         )
-        # Consolidate results (using overall portfolio return/pnl where appropriate)
-        # save_results_to_json(OUTPUT_FILE, final_results)
-        print(json.dumps(final_results, indent=None, separators=(',', ':'), default=str)) # PRINT TO STDOUT
+
+        # Output results: File (Cloud Batch) or stdout (Cloud Build docker run)
+        # Cloud Batch mounts GCS via gcsfuse - container writes locally, syncs to GCS
+        output_dir = os.environ.get('OUTPUT_DIR')
+
+        if output_dir:
+            # Write to mounted GCS volume (Cloud Batch environment)
+            # The volume is mounted via gcsfuse at VM level - container sees local filesystem
+            output_path = os.path.join(output_dir, 'output.json')
+            with open(output_path, 'w') as f:
+                json.dump(final_results, f, indent=None, separators=(',', ':'), default=str)
+            print(f"Results written to {output_path}")
+        else:
+            # Fallback: print to stdout (for local testing / Cloud Build docker run)
+            print(json.dumps(final_results, indent=None, separators=(',', ':'), default=str))
 
     except Exception as json_e:
         # If any part fails, try to save an error state (optional)
