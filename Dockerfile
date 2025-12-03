@@ -16,8 +16,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy runner script
-COPY runner.py ./workspace
-COPY symbols.txt ./workspace
+COPY runner.py .
+COPY symbols.txt .
 
 # Copy agent code (mounted from Cloud Storage during build)
 COPY ./agent /workspace/agent
