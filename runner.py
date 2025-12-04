@@ -200,9 +200,10 @@ if __name__ == "__main__":
         lines = file.readlines()  # Read all lines into a list
         symbols = [line.replace("\n", "") for line in lines]
 
-    start_date = "1999-11-10"
-    end_date = "2025-03-25"
-    # end_date = datetime.datetime.now().strftime('%Y-%m-%d') # Use current date for end
+    # Use a 2-year window for faster backtesting (adjust as needed)
+    # Longer periods = more accurate but slower (each bar runs ML inference)
+    start_date = "2023-01-01"
+    end_date = "2024-12-31"
     # Define risk-free rate for Sharpe Ratio (e.g., 0% or approximate T-bill rate)
     risk_free_rate = 0.01 # Example: 1% annual rate
 
