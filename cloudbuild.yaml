@@ -1,0 +1,62 @@
+# =============================================================================
+# Google Cloud Build - Course 1 Backtesting Container
+# =============================================================================
+# Builds a Docker image for the Course 1 backtesting agent.
+# Uses base-with-models as the base image (pre-installed PyTorch, ML libs).
+#
+# Triggers:
+#   - Push to main/master branch
+#
+# Output:
+#   - gcr.io/$PROJECT_ID/course-1:$COMMIT_SHA
+#   - gcr.io/$PROJECT_ID/course-1:$SHORT_SHA
+#   - gcr.io/$PROJECT_ID/course-1:latest
+# =============================================================================
+
+steps:
+  # ---------------------------------------------------------------------------
+  # Step 1: Build Docker Image
+  # ---------------------------------------------------------------------------
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag=gcr.io/$PROJECT_ID/course-1:$COMMIT_SHA
+      - --tag=gcr.io/$PROJECT_ID/course-1:$SHORT_SHA
+      - --tag=gcr.io/$PROJECT_ID/course-1:latest
+      - --file=Dockerfile
+      - .
+    id: build
+
+  # ---------------------------------------------------------------------------
+  # Step 2: Push All Tags
+  # ---------------------------------------------------------------------------
+  - name: gcr.io/cloud-builders/docker
+    args: [push, --all-tags, gcr.io/$PROJECT_ID/course-1]
+    id: push
+
+  # ---------------------------------------------------------------------------
+  # Step 3: Verify Image
+  # ---------------------------------------------------------------------------
+  - name: gcr.io/$PROJECT_ID/course-1:latest
+    entrypoint: python
+    args:
+      - -c
+      - |
+        import backtrader
+        import pandas
+        from agent.agent import Agent
+        print('Course 1 image verified successfully')
+        print(f'  backtrader: {backtrader.__version__}')
+    id: verify
+
+images:
+  - gcr.io/$PROJECT_ID/course-1:$COMMIT_SHA
+  - gcr.io/$PROJECT_ID/course-1:$SHORT_SHA
+  - gcr.io/$PROJECT_ID/course-1:latest
+
+options:
+  machineType: E2_HIGHCPU_8
+  diskSizeGb: 100
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 1200s
